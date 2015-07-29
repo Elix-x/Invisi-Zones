@@ -1,0 +1,16 @@
+[
+{
+  "modid": "invisizones",
+  "name": "Invisi Zones",
+  "description": "",
+  "version": "1.1.1",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["elix_x"],
+  "credits": "elix_x",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
