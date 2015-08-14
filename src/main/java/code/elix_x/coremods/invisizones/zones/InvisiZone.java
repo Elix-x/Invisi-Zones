@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -205,7 +206,7 @@ public class InvisiZone {
 
 	@Override
 	public String toString() {
-		return "Zone owned by " + owner + " in the dimension " + dimId + "with range of " + box;
+		return "Zone owned by " + owner + " in the dimension " + dimId + " within " + box;
 	}
 
 }

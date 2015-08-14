@@ -40,7 +40,7 @@ public class InvisiZonesBase {
 
 	public static final String MODID = "invisizones";
 	public static final String NAME = "Invisi Zones";
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "1.1.4";
 
 	public static final Logger logger = LogManager.getLogger("IZ Base");
 	

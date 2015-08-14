@@ -57,6 +57,11 @@ public class InvisiZonesTransformer implements IClassTransformer{
 	private byte[] patchChunk(String name, byte[] bytes) {
 		String getBlock = InvisiZonesTranslator.getMapedMethodName("Chunk", "func_150810_a", "getBlock");
 		String getBlockDesc = InvisiZonesTranslator.getMapedMethodDesc("Chunk", "func_150810_a", "(III)Lnet/minecraft/block/Block;");
+		String getBlockMetadata = InvisiZonesTranslator.getMapedMethodName("Chunk", "func_76628_c", "getBlockMetadata");
+		String getBlockMetadataDesc = InvisiZonesTranslator.getMapedMethodDesc("Chunk", "func_76628_c", "(III)I");
+		String getTileEntityUnsafe = "getTileEntityUnsafe";
+		String func_150806_e = InvisiZonesTranslator.getMapedMethodName("Chunk", "func_150806_e", "func_150806_e");
+		String func_150806_eDesc = InvisiZonesTranslator.getMapedMethodDesc("Chunk", "func_150806_e", "(III)Lnet/minecraft/tileentity/TileEntity;");
 
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
@@ -92,6 +97,115 @@ public class InvisiZonesTransformer implements IClassTransformer{
 					logger.info("**************************************************");
 				}catch(Exception e){
 					logger.info("Patching getBlock Failed With Exception:");
+					e.printStackTrace();
+					logger.info("**************************************************");
+				}
+			}
+			if(method.name.equals(getBlockMetadata) && method.desc.equals(getBlockMetadataDesc)){
+				try{
+					logger.info("**************************************************");
+					logger.info("Patching getBlockMetadata");
+
+					/*AbstractInsnNode target = null;
+					for(AbstractInsnNode node : method.instructions.toArray()){
+						if(node.getOpcode() == Opcodes.F_SAME){
+							target = node;
+							break;
+						}
+					}*/
+					
+					LabelNode skipTo = new LabelNode();
+
+					InsnList list = new InsnList();
+					list.add(new LabelNode());
+//					list.add(new InsnNode(Opcodes.F_SAME));
+					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetBlockMetadataInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
+					list.add(new LabelNode());
+					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getBlockMetadataInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)I", false));
+					list.add(new InsnNode(Opcodes.IRETURN));
+					list.add(skipTo);
+//					list.add(new InsnNode(Opcodes.F_SAME));
+					method.instructions.insert(/*target,*/ list);
+
+					logger.info("Patching getBlockMetadata Completed");
+					logger.info("**************************************************");
+				}catch(Exception e){
+					logger.info("Patching getBlockMetadata Failed With Exception:");
+					e.printStackTrace();
+					logger.info("**************************************************");
+				}
+			}
+			if(method.name.equals(func_150806_e) && method.desc.equals(func_150806_eDesc)){
+				try{
+					logger.info("**************************************************");
+					logger.info("Patching func_150806_e");
+
+					LabelNode skipTo = new LabelNode();
+
+					InsnList list = new InsnList();
+					list.add(new LabelNode());
+					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
+					list.add(new LabelNode());
+					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)L" + InvisiZonesTranslator.getMapedClassName("tileentity.TileEntity").replace(".", "/") + ";", false));
+					list.add(new InsnNode(Opcodes.ARETURN));
+					list.add(skipTo);
+					method.instructions.insert(list);
+
+					logger.info("Patching func_150806_e Completed");
+					logger.info("**************************************************");
+				}catch(Exception e){
+					logger.info("Patching func_150806_e Failed With Exception:");
+					e.printStackTrace();
+					logger.info("**************************************************");
+				}
+			}
+			if(method.name.equals(getTileEntityUnsafe)){
+				try{
+					logger.info("**************************************************");
+					logger.info("Patching getTileEntityUnsafe");
+
+					LabelNode skipTo = new LabelNode();
+
+					InsnList list = new InsnList();
+					list.add(new LabelNode());
+					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
+					list.add(new LabelNode());
+					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)L" + InvisiZonesTranslator.getMapedClassName("tileentity.TileEntity").replace(".", "/") + ";", false));
+					list.add(new InsnNode(Opcodes.ARETURN));
+					list.add(skipTo);
+					method.instructions.insert(list);
+
+					logger.info("Patching getTileEntityUnsafe Completed");
+					logger.info("**************************************************");
+				}catch(Exception e){
+					logger.info("Patching getTileEntityUnsafe Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
 				}

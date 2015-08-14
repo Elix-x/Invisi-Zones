@@ -7,6 +7,7 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.chunk.Chunk;
@@ -29,20 +30,18 @@ public class InvisiZonesManagerClient {
 	/*
 	 * Hooks
 	 */	
-
+	
 	@SideOnly(Side.CLIENT)
-	public static boolean doGetBlockInsideChunk(Chunk chunk, int x, int y, int z){
-		if(chunk.worldObj.isRemote){
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-			x = chunk.xPosition * 16 + x;
-			z = chunk.zPosition * 16 + z;
-			for(InvisiZone zone : InvisiZonesManager.getZones()){
-				if(!zone.renderBlocks()){
-					if(zone.dimId == player.worldObj.provider.dimensionId){
-						if(zone.inside(Vec3.createVectorHelper(x, y, z))){
-							if(!zone.renderBlockAt(player, x, y, z)){
-								return false;
-							}
+	public static boolean doGetInsideChunk(Chunk chunk, int x, int y, int z){
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		x = chunk.xPosition * 16 + x;
+		z = chunk.zPosition * 16 + z;
+		for(InvisiZone zone : InvisiZonesManager.getZones()){
+			if(!zone.renderBlocks()){
+				if(zone.dimId == player.worldObj.provider.dimensionId){
+					if(zone.inside(Vec3.createVectorHelper(x, y, z))){
+						if(!zone.renderBlockAt(player, x, y, z)){
+							return false;
 						}
 					}
 				}
@@ -51,11 +50,38 @@ public class InvisiZonesManagerClient {
 		return true;
 	}
 
-	@SideOnly(Side.CLIENT)
+	public static boolean doGetBlockInsideChunk(Chunk chunk, int x, int y, int z){
+		if(chunk.worldObj.isRemote){
+			return doGetInsideChunk(chunk, x, y, z);
+		}
+		return true;
+	}
+
 	public static Block getBlockInsideChunk(Chunk chunk, int x, int y, int z){
 		return Blocks.air;
 	}
-
+	
+	public static boolean doGetBlockMetadataInsideChunk(Chunk chunk, int x, int y, int z){
+		if(chunk.worldObj.isRemote){
+			return doGetInsideChunk(chunk, x, y, z);
+		}
+		return true;
+	}
+	
+	public static int getBlockMetadataInsideChunk(Chunk chunk, int x, int y, int z){
+		return 0;
+	}
+	public static boolean doGetTileEntityInsideChunk(Chunk chunk, int x, int y, int z){
+		if(chunk.worldObj.isRemote){
+			return doGetInsideChunk(chunk, x, y, z);
+		}
+		return true;
+	}
+	
+	public static TileEntity getTileEntityInsideChunk(Chunk chunk, int x, int y, int z){
+		return null;
+	}
+	
 	@SideOnly(Side.CLIENT)
 	public static boolean renderEntity(Entity entity) {
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;

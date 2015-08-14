@@ -11,13 +11,13 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.Name;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 @Name(value = "invizizones")
-@TransformerExclusions(value = "code.elix_x.coremods")
+@TransformerExclusions(value = "code.elix_x.coremods.invisizones.core")
 @MCVersion(value = "1.7.10")
 public final class InvisiZonesCore implements IFMLLoadingPlugin{
 
 	//-Dfml.coreMods.load=code.elix_x.coremods.invisizones.InvisiZonesCore
 	
-	public static final String Transformer = InvisiZonesTransformer.class.getName();
+	public static final String Transformer = "code.elix_x.coremods.invisizones.core.InvisiZonesTransformer";
 	
 	public static final String[] transformers = new String[]{Transformer};
 	
