@@ -24,7 +24,6 @@ public class ItemInvisiGoogles extends ItemArmor {
 	public ItemInvisiGoogles() {
 		super(EnumHelper.addArmorMaterial("invisiGooglesMaterial", -1, new int[]{0, 0, 0, 0}, 0), 0, 0);
 		setUnlocalizedName("invisigoogles");
-		//		setTextureName(InvisiZonesBase.modid + ":invisigoogles.png");
 	}
 
 	@Override

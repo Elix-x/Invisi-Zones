@@ -52,7 +52,7 @@ public class TileEntitySimpleInvisiZonerRenderer extends TileEntitySpecialRender
 		GL11.glPopMatrix();
 		
 		if(synced){
-			if(InvisiZonesManager.hasGoogles(Minecraft.getMinecraft().thePlayer)){
+			if(InvisiZonesManager.areGooglesActive(Minecraft.getMinecraft().thePlayer)){
 				GL11.glPushMatrix();
 
 				GL11.glTranslatef((float) x + 0.5f, (float) y + 1.5f, (float) z + 0.5f);

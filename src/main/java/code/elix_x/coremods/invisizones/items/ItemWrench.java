@@ -29,7 +29,7 @@ public class ItemWrench extends Item {
 	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player) {
 		if(!world.isRemote){
 			if(itemstack != null){
-				if(itemstack.getItem() == InvisiZonesBase.wrench){
+				if(itemstack.getItem() == InvisiZonesBase.invisiWrench){
 					if(player.isSneaking()){
 						NBTTagCompound wrenchData = itemstack.stackTagCompound;
 						if(wrenchData == null){
@@ -57,12 +57,12 @@ public class ItemWrench extends Item {
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer player, World world, int x, int y, int z, int side, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
 		if(!world.isRemote){
 			if(itemstack != null){
-				if(itemstack.getItem() == InvisiZonesBase.wrench){
-					if(world.getBlock(x, y, z) == InvisiZonesBase.simpleZoner){
+				if(itemstack.getItem() == InvisiZonesBase.invisiWrench){
+					if(world.getBlock(x, y, z) == InvisiZonesBase.simpleInvisiZoner){
 						if(player.isSneaking()){
 							TileEntitySimpleInvisiZoner zoner = (TileEntitySimpleInvisiZoner) world.getTileEntity(x, y, z);
 							world.setBlock(x, y, z, Blocks.air);
-							world.spawnEntityInWorld(new EntityItem(world, x, y, z, new ItemStack(InvisiZonesBase.simpleZoner, zoner.isSynced() ? 2 : 1)));
+							world.spawnEntityInWorld(new EntityItem(world, x, y, z, new ItemStack(InvisiZonesBase.simpleInvisiZoner, zoner.isSynced() ? 2 : 1)));
 							return true;
 						} else {
 							NBTTagCompound wrenchData = itemstack.stackTagCompound;

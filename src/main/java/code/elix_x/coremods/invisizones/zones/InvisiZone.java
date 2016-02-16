@@ -54,7 +54,7 @@ public class InvisiZone {
 			return true;
 		} else {
 			if(isOwner(player.func_146094_a(player.getGameProfile()))){
-				if(InvisiZonesManager.hasGoogles(player)){
+				if(InvisiZonesManager.areGooglesActive(player)){
 					return true;
 				}
 			}
@@ -80,7 +80,7 @@ public class InvisiZone {
 			return true;
 		} else {
 			if(isOwner(player.func_146094_a(player.getGameProfile()))){
-				if(InvisiZonesManager.hasGoogles(player)){
+				if(InvisiZonesManager.areGooglesActive(player)){
 					return true;
 				}
 			}
@@ -93,7 +93,7 @@ public class InvisiZone {
 			return true;
 		} else {
 			if(isOwner(player.func_146094_a(player.getGameProfile()))){
-				if(InvisiZonesManager.hasGoogles(player)){
+				if(InvisiZonesManager.areGooglesActive(player)){
 					return true;
 				}
 			}
@@ -106,7 +106,7 @@ public class InvisiZone {
 			return true;
 		} else {
 			if(isOwner(player.func_146094_a(player.getGameProfile()))){
-				if(InvisiZonesManager.hasGoogles(player)){
+				if(InvisiZonesManager.areGooglesActive(player)){
 					return true;
 				}
 			}

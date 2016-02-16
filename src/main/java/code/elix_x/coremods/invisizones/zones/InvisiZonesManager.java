@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
@@ -30,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import code.elix_x.coremods.invisizones.InvisiZonesBase;
 import code.elix_x.coremods.invisizones.entities.proprieties.InvisiExtendedEntityProperties;
+import code.elix_x.coremods.invisizones.googles.InvisiGooglesHelper;
 import code.elix_x.coremods.invisizones.net.UpdateRendererMessage;
 import code.elix_x.coremods.invisizones.net.ZonesSyncingMessage;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -38,14 +40,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class InvisiZonesManager {
 
-	//	private static Map<EntityPlayer, Boolean> googles = new HashMap<EntityPlayer, Boolean>();
-	//	private static Map<EntityPlayer, Boolean> inZones = new HashMap<EntityPlayer, Boolean>();
 	private static Set<InvisiZone> zones = new HashSet<InvisiZone>();
-	private static Logger logger = LogManager.getLogger("InvisiZonesManager");
-
-	/*public static void removeZone(int x, int y, int z, int x2, int y2, int z2) {
-		zones.remove(o)
-	}*/
+	private static Logger logger = LogManager.getLogger("Invisi Zones Manager");
 
 	public static Set<InvisiZone> getZones() {
 		return zones;
@@ -78,7 +74,6 @@ public class InvisiZonesManager {
 	}
 
 	private static void syncPlayers() {
-		//		System.out.println("Syncing zones!");
 		InvisiZonesBase.net.sendToAll(new ZonesSyncingMessage(getZones()));
 	}
 
@@ -121,8 +116,8 @@ public class InvisiZonesManager {
 		return false;
 	}
 
-	public static boolean hasGoogles(EntityPlayer player) {
-		return player.getCurrentArmor(3) != null ? player.getCurrentArmor(3).getItem() == InvisiZonesBase.invisigoogles : false;
+	public static boolean areGooglesActive(EntityPlayer player) {
+		return player.getCurrentArmor(0) != null && InvisiGooglesHelper.areGooglesActive(player.getCurrentArmor(0));
 	}
 
 	public static void checkPlayerAndUpdateRenderer(EntityPlayer player) {
@@ -130,11 +125,11 @@ public class InvisiZonesManager {
 			player.registerExtendedProperties("invisiPrevData", new InvisiExtendedEntityProperties());
 		}
 		InvisiExtendedEntityProperties props = (InvisiExtendedEntityProperties) player.getExtendedProperties("invisiPrevData");
-		if(props.hadGoogles != InvisiZonesManager.hasGoogles(player)){
-			props.hadGoogles = InvisiZonesManager.hasGoogles(player);
+		if(props.hadGoogles != InvisiZonesManager.areGooglesActive(player)){
+			props.hadGoogles = InvisiZonesManager.areGooglesActive(player);
 			InvisiZonesManager.updateRenderer(player);
 		}
-		if(InvisiZonesManager.hasGoogles(player)){
+		if(InvisiZonesManager.areGooglesActive(player)){
 			return;
 		}
 		if(props.wasInZone != InvisiZonesManager.inZone(player)){

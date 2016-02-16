@@ -1,20 +1,26 @@
 package code.elix_x.coremods.invisizones.proxy;
 
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.network.Packet;
+import code.elix_x.excore.utils.proxy.IProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;;
 
-public class CommonProxy {
+public class CommonProxy implements IProxy {
 
-	public void preInit() {
-
+	@Override
+	public void preInit(FMLPreInitializationEvent event) {
+		
 	}
 
-	public void Init() {
-
+	@Override
+	public void init(FMLInitializationEvent event) {
+		
 	}
 
-	public void postInit() {
-
+	@Override
+	public void postInit(FMLPostInitializationEvent event) {
+		
 	}
 
 	public ModelBiped getGlassesModel() {
