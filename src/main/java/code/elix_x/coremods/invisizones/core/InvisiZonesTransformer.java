@@ -1,7 +1,5 @@
 package code.elix_x.coremods.invisizones.core;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
@@ -17,17 +15,15 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraft.launchwrapper.IClassTransformer;
 
-public class InvisiZonesTransformer implements IClassTransformer{
+public class InvisiZonesTransformer implements IClassTransformer {
 
-	public static Logger logger = LogManager.getLogger("IZ Core");
+	public static final Logger logger = LogManager.getLogger("IZ Core");
 
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] bytes) {
-		if(name.equals(InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk"))){
+	public byte[] transform(String name, String transformedName, byte[] bytes){
+		if(name.equals("net.minecraft.world.chunk.Chunk")){
 			logger.info("##################################################");
 			logger.info("Patching Chunk");
 			byte[] b = patchChunk(name, bytes);
@@ -35,7 +31,7 @@ public class InvisiZonesTransformer implements IClassTransformer{
 			logger.info("##################################################");
 			return b;
 		}
-		if(name.equals(InvisiZonesTranslator.getMapedClassName("client.renderer.entity.RenderManager"))){
+		if(name.equals("net.minecraft.client.renderer.entity.RenderManager")){
 			logger.info("##################################################");
 			logger.info("Patching RenderManager");
 			byte[] b = patchRenderManager(name, bytes);
@@ -43,7 +39,7 @@ public class InvisiZonesTransformer implements IClassTransformer{
 			logger.info("##################################################");
 			return b;
 		}
-		if(name.equals(InvisiZonesTranslator.getMapedClassName("client.particle.EffectRenderer"))){
+		if(name.equals("net.minecraft.client.particle.EffectRenderer")){
 			logger.info("##################################################");
 			logger.info("Patching EffectRenderer");
 			byte[] b = patchEffectRenderer(name, bytes);
@@ -54,22 +50,14 @@ public class InvisiZonesTransformer implements IClassTransformer{
 		return bytes;
 	}
 
-	private byte[] patchChunk(String name, byte[] bytes) {
-		String getBlock = InvisiZonesTranslator.getMapedMethodName("Chunk", "func_150810_a", "getBlock");
-		String getBlockDesc = InvisiZonesTranslator.getMapedMethodDesc("Chunk", "func_150810_a", "(III)Lnet/minecraft/block/Block;");
-		String getBlockMetadata = InvisiZonesTranslator.getMapedMethodName("Chunk", "func_76628_c", "getBlockMetadata");
-		String getBlockMetadataDesc = InvisiZonesTranslator.getMapedMethodDesc("Chunk", "func_76628_c", "(III)I");
-		String getTileEntityUnsafe = "getTileEntityUnsafe";
-		String func_150806_e = InvisiZonesTranslator.getMapedMethodName("Chunk", "func_150806_e", "func_150806_e");
-		String func_150806_eDesc = InvisiZonesTranslator.getMapedMethodDesc("Chunk", "func_150806_e", "(III)Lnet/minecraft/tileentity/TileEntity;");
-
+	private byte[] patchChunk(String name, byte[] bytes){
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
 
 		for(MethodNode method : classNode.methods){
-			if(method.name.equals(getBlock) && method.desc.equals(getBlockDesc)){
-				try{
+			if((method.name.equals("getBlock") || method.name.equals("func_150810_a")) && method.desc.equals("(III)Lnet/minecraft/block/Block;")){
+				try {
 					logger.info("**************************************************");
 					logger.info("Patching getBlock");
 
@@ -81,28 +69,28 @@ public class InvisiZonesTransformer implements IClassTransformer{
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetBlockInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetBlockInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)Z", false));
 					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
 					list.add(new LabelNode());
 					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getBlockInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)L" + InvisiZonesTranslator.getMapedClassName("block.Block").replace(".", "/") + ";", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getBlockInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)L" + "net.minecraft.block.Block".replace(".", "/") + ";", false));
 					list.add(new InsnNode(Opcodes.ARETURN));
 					list.add(skipTo);
 					method.instructions.insert(method.instructions.get(0), list);
 
 					logger.info("Patching getBlock Completed");
 					logger.info("**************************************************");
-				}catch(Exception e){
+				} catch(Exception e){
 					logger.info("Patching getBlock Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
 				}
 			}
-			if(method.name.equals(getBlockMetadata) && method.desc.equals(getBlockMetadataDesc)){
-				try{
+			if((method.name.equals("getBlockMetadata") || method.name.equals("func_76628_c")) && method.desc.equals("(III)I")){
+				try {
 					logger.info("**************************************************");
 					logger.info("Patching getBlockMetadata");
 
@@ -113,39 +101,39 @@ public class InvisiZonesTransformer implements IClassTransformer{
 							break;
 						}
 					}*/
-					
+
 					LabelNode skipTo = new LabelNode();
 
 					InsnList list = new InsnList();
 					list.add(new LabelNode());
-//					list.add(new InsnNode(Opcodes.F_SAME));
+					//					list.add(new InsnNode(Opcodes.F_SAME));
 					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetBlockMetadataInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetBlockMetadataInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)Z", false));
 					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
 					list.add(new LabelNode());
 					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getBlockMetadataInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)I", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getBlockMetadataInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)I", false));
 					list.add(new InsnNode(Opcodes.IRETURN));
 					list.add(skipTo);
-//					list.add(new InsnNode(Opcodes.F_SAME));
+					//					list.add(new InsnNode(Opcodes.F_SAME));
 					method.instructions.insert(/*target,*/ list);
 
 					logger.info("Patching getBlockMetadata Completed");
 					logger.info("**************************************************");
-				}catch(Exception e){
+				} catch(Exception e){
 					logger.info("Patching getBlockMetadata Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
 				}
 			}
-			if(method.name.equals(func_150806_e) && method.desc.equals(func_150806_eDesc)){
-				try{
+			if(method.name.equals("func_150806_e") && method.desc.equals("(III)Lnet/minecraft/tileentity/TileEntity;")){
+				try {
 					logger.info("**************************************************");
 					logger.info("Patching func_150806_e");
 
@@ -157,28 +145,28 @@ public class InvisiZonesTransformer implements IClassTransformer{
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetTileEntityInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)Z", false));
 					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
 					list.add(new LabelNode());
 					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)L" + InvisiZonesTranslator.getMapedClassName("tileentity.TileEntity").replace(".", "/") + ";", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getTileEntityInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)L" + "net.minecraft.tileentity.TileEntity".replace(".", "/") + ";", false));
 					list.add(new InsnNode(Opcodes.ARETURN));
 					list.add(skipTo);
 					method.instructions.insert(list);
 
 					logger.info("Patching func_150806_e Completed");
 					logger.info("**************************************************");
-				}catch(Exception e){
+				} catch(Exception e){
 					logger.info("Patching func_150806_e Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
 				}
 			}
-			if(method.name.equals(getTileEntityUnsafe)){
-				try{
+			if(method.name.equals("getTileEntityUnsafe")){
+				try {
 					logger.info("**************************************************");
 					logger.info("Patching getTileEntityUnsafe");
 
@@ -190,21 +178,21 @@ public class InvisiZonesTransformer implements IClassTransformer{
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)Z", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "doGetTileEntityInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)Z", false));
 					list.add(new JumpInsnNode(Opcodes.IFNE, skipTo));
 					list.add(new LabelNode());
 					list.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 					list.add(new VarInsnNode(Opcodes.ILOAD, 3));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getTileEntityInsideChunk", "(L" + InvisiZonesTranslator.getMapedClassName("world.chunk.Chunk").replace(".", "/") + ";III)L" + InvisiZonesTranslator.getMapedClassName("tileentity.TileEntity").replace(".", "/") + ";", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "getTileEntityInsideChunk", "(L" + "net.minecraft.world.chunk.Chunk".replace(".", "/") + ";III)L" + "net.minecraft.tileentity.TileEntity".replace(".", "/") + ";", false));
 					list.add(new InsnNode(Opcodes.ARETURN));
 					list.add(skipTo);
 					method.instructions.insert(list);
 
 					logger.info("Patching getTileEntityUnsafe Completed");
 					logger.info("**************************************************");
-				}catch(Exception e){
+				} catch(Exception e){
 					logger.info("Patching getTileEntityUnsafe Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
@@ -217,17 +205,14 @@ public class InvisiZonesTransformer implements IClassTransformer{
 		return writer.toByteArray();
 	}
 
-	private byte[] patchEffectRenderer(String name, byte[] bytes) {
-		String renderParticles = InvisiZonesTranslator.getMapedMethodName("EffectRenderer", "func_78874_a", "renderParticles");
-		String renderParticlesDesc = InvisiZonesTranslator.getMapedMethodDesc("EffectRenderer", "func_78874_a", "(Lnet/minecraft/entity/Entity;F)V");
-
+	private byte[] patchEffectRenderer(String name, byte[] bytes){
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
 
 		for(MethodNode method : classNode.methods){
-			if(method.name.equals(renderParticles) && method.desc.equals(renderParticlesDesc)){
-				try{
+			if((method.name.equals("renderParticles") || method.name.equals("func_78874_a")) && method.desc.equals("(Lnet/minecraft/entity/Entity;F)V")){
+				try {
 					logger.info("**************************************************");
 					logger.info("Patching renderParticles");
 
@@ -256,7 +241,7 @@ public class InvisiZonesTransformer implements IClassTransformer{
 
 					InsnList list = new InsnList();
 					list.add(new VarInsnNode(Opcodes.ALOAD, 12));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "renderParticles", "(L" + InvisiZonesTranslator.getMapedClassName("client.particle.EntityFX").replace(".", "/") + ";)Z", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "renderParticles", "(L" + "net.minecraft.client.particle.EntityFX".replace(".", "/") + ";)Z", false));
 					list.add(new JumpInsnNode(Opcodes.IFEQ, skipTo));
 					list.add(new LabelNode());
 					method.instructions.insert(targetNode, list);
@@ -265,7 +250,7 @@ public class InvisiZonesTransformer implements IClassTransformer{
 
 					logger.info("Patching renderParticles Completed");
 					logger.info("**************************************************");
-				}catch(Exception e){
+				} catch(Exception e){
 					logger.info("Patching renderParticles Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
@@ -277,18 +262,15 @@ public class InvisiZonesTransformer implements IClassTransformer{
 		classNode.accept(writer);
 		return writer.toByteArray();
 	}
-	
-	private byte[] patchRenderManager(String name, byte[] bytes) {
-		String func_147939_a = InvisiZonesTranslator.getMapedMethodName("RenderManager", "func_147939_a", "func_147939_a");
-		String func_147939_aDesc = InvisiZonesTranslator.getMapedMethodDesc("RenderManager", "func_147939_a", "(Lnet/minecraft/entity/Entity;DDDFFZ)Z");
 
+	private byte[] patchRenderManager(String name, byte[] bytes){
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
 
 		for(MethodNode method : classNode.methods){
-			if(method.name.equals(func_147939_a) && method.desc.equals(func_147939_aDesc)){
-				try{
+			if(method.name.equals("func_147939_a") && method.desc.equals("(Lnet/minecraft/entity/Entity;DDDFFZ)Z")){
+				try {
 					logger.info("**************************************************");
 					logger.info("Patching func_147939_a");
 
@@ -296,7 +278,7 @@ public class InvisiZonesTransformer implements IClassTransformer{
 
 					InsnList list = new InsnList();
 					list.add(new VarInsnNode(Opcodes.ALOAD, 1));
-					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "renderEntity", "(L" + InvisiZonesTranslator.getMapedClassName("entity.Entity").replace(".", "/") + ";)Z", false));
+					list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "code.elix_x.coremods.invisizones.core.InvisiZoneHooks".replace(".", "/"), "renderEntity", "(L" + "net.minecraft.entity.Entity".replace(".", "/") + ";)Z", false));
 					list.add(new JumpInsnNode(Opcodes.IFNE, goTo));
 					list.add(new InsnNode(Opcodes.ICONST_0));
 					list.add(new InsnNode(Opcodes.IRETURN));
@@ -305,7 +287,7 @@ public class InvisiZonesTransformer implements IClassTransformer{
 
 					logger.info("Patching func_147939_a Completed");
 					logger.info("**************************************************");
-				}catch(Exception e){
+				} catch(Exception e){
 					logger.info("Patching func_147939_a Failed With Exception:");
 					e.printStackTrace();
 					logger.info("**************************************************");
