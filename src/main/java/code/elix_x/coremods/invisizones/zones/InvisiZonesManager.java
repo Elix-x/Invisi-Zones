@@ -54,7 +54,6 @@ public class InvisiZonesManager {
 	}
 
 	public static void clearZones(){
-		logger.info("Clearing zones on: " + FMLCommonHandler.instance().getSide());
 		getZones().clear();
 	}
 

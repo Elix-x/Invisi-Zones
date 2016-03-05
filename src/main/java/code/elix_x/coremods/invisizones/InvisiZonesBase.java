@@ -50,7 +50,7 @@ public class InvisiZonesBase {
 	public static final String NAME = "Invisi Zones";
 	public static final String VERSION = "1.1.4";
 
-	public static final Logger logger = LogManager.getLogger("Invisi Zones");
+	public static final Logger logger = LogManager.getLogger(NAME);
 
 	@Mod.Instance(MODID)
 	public static InvisiZonesBase instance;
@@ -74,7 +74,7 @@ public class InvisiZonesBase {
 	public static Block blockyHolographer;
 
 	@EventHandler
-	public void preinit(FMLPreInitializationEvent event){ 
+	public void preInit(FMLPreInitializationEvent event){ 
 		net = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 		net.registerMessage(ZonesSyncingMessage.Handler.class, ZonesSyncingMessage.class, 0, Side.CLIENT);
 		net.registerMessage(UpdateRendererMessage.Handler.class, UpdateRendererMessage.class, 1, Side.CLIENT);
@@ -130,7 +130,7 @@ public class InvisiZonesBase {
 	}
 
 	@EventHandler
-	public void postinit(FMLPostInitializationEvent event){ 
+	public void postInit(FMLPostInitializationEvent event){ 
 		proxy.postInit(event);
 	}
 
