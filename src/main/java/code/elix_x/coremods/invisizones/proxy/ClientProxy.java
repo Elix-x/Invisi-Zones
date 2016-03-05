@@ -23,18 +23,18 @@ import net.minecraftforge.common.MinecraftForge;
 public class ClientProxy extends CommonProxy {
 
 	@Override
-	public void preInit(FMLPreInitializationEvent event) {
+	public void preInit(FMLPreInitializationEvent event){
 
 	}
 
 	@Override
-	public void init(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new DrawBlockSelectorEvent());
-		MinecraftForge.EVENT_BUS.register(new AddInformationEvent());
-
+	public void init(FMLInitializationEvent event){
 		MinecraftForgeClient.registerItemRenderer(InvisiZonesBase.invisigoogles, new ItemInvisiGooglesRenderer());
 		MinecraftForgeClient.registerItemRenderer(InvisiZonesBase.invisiWrench, new ItemInvisiWrenchRenderer());
 		registerTeRenderer(new TileEntitySimpleInvisiZoner(), Item.getItemFromBlock(InvisiZonesBase.simpleInvisiZoner), new TileEntitySimpleInvisiZonerRenderer());
+
+		MinecraftForge.EVENT_BUS.register(new DrawBlockSelectorEvent());
+		MinecraftForge.EVENT_BUS.register(new AddInformationEvent());
 	}
 
 	public static void registerTeRenderer(TileEntity te, Item item, TileEntitySpecialRenderer renderer){
@@ -43,12 +43,13 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void postInit(FMLPostInitializationEvent event) {
+	public void postInit(FMLPostInitializationEvent event){
 
 	}
 
 	@Override
-	public ModelBiped getGlassesModel() {
+	public ModelBiped getGlassesModel(){
 		return new ModelInvisiGooglesWearable(0.5f);
 	}
+
 }

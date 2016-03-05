@@ -25,11 +25,11 @@ public class InvisiGooglesHelper {
 	public static boolean areGoogles(ItemStack itemstack){
 		return itemstack != null && itemstack.stackTagCompound != null && itemstack.stackTagCompound.hasKey(INVISIGOOGLESACTIVENBT);
 	}
-	
-	public static boolean areGooglesActive(ItemStack itemstack) {
+
+	public static boolean areGooglesActive(ItemStack itemstack){
 		return areGoogles(itemstack) && itemstack.stackTagCompound.getBoolean(INVISIGOOGLESACTIVENBT);
 	}
-	
+
 	public static void setGooglesActive(ItemStack itemstack, boolean active){
 		if(itemstack.stackTagCompound == null) itemstack.stackTagCompound = new NBTTagCompound();
 		itemstack.stackTagCompound.setBoolean(INVISIGOOGLESACTIVENBT, active);

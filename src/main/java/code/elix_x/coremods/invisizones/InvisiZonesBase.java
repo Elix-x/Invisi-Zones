@@ -43,7 +43,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 
-@Mod(modid = InvisiZonesBase.MODID, name = InvisiZonesBase.NAME, version = InvisiZonesBase.VERSION, dependencies = "required-after:" + EXCore.DEPENDENCY, acceptedMinecraftVersions = "1.7.10")
+@Mod(modid = InvisiZonesBase.MODID, name = InvisiZonesBase.NAME, version = InvisiZonesBase.VERSION, dependencies = "required-after:" + EXCore.DEPENDENCY, acceptedMinecraftVersions = EXCore.MCVERSION)
 public class InvisiZonesBase {
 
 	public static final String MODID = "invisizones";
@@ -55,7 +55,7 @@ public class InvisiZonesBase {
 	@Mod.Instance(MODID)
 	public static InvisiZonesBase instance;
 
-	@SidedProxy(clientSide = "code.elix_x.coremods.invisizones.proxy.ClientProxy", serverSide = "code.elix_x.coremods.invisizones.proxy.CommonProxy")
+	@SidedProxy(modId = MODID, clientSide = "code.elix_x.coremods.invisizones.proxy.ClientProxy", serverSide = "code.elix_x.coremods.invisizones.proxy.CommonProxy")
 	public static CommonProxy proxy;
 
 	public static SimpleNetworkWrapper net;
@@ -74,7 +74,7 @@ public class InvisiZonesBase {
 	public static Block blockyHolographer;
 
 	@EventHandler
-	public void preinit(FMLPreInitializationEvent event) { 
+	public void preinit(FMLPreInitializationEvent event){ 
 		net = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 		net.registerMessage(ZonesSyncingMessage.Handler.class, ZonesSyncingMessage.class, 0, Side.CLIENT);
 		net.registerMessage(UpdateRendererMessage.Handler.class, UpdateRendererMessage.class, 1, Side.CLIENT);
@@ -109,13 +109,12 @@ public class InvisiZonesBase {
 		config.save();
 	}
 
-
 	@EventHandler
-	public void init(FMLInitializationEvent event) { 
-		invisitab = new CreativeTabs("invisitab") {
+	public void init(FMLInitializationEvent event){ 
+		invisitab = new CreativeTabs("invisitab"){
 
 			@Override
-			public Item getTabIconItem() {
+			public Item getTabIconItem(){
 				return invisiWrench;
 			}
 
@@ -131,12 +130,12 @@ public class InvisiZonesBase {
 	}
 
 	@EventHandler
-	public void postinit(FMLPostInitializationEvent event) { 
+	public void postinit(FMLPostInitializationEvent event){ 
 		proxy.postInit(event);
 	}
 
 	@EventHandler
-	public void onStopped(FMLServerStoppedEvent event) {
+	public void onStopped(FMLServerStoppedEvent event){
 		InvisiZonesManager.clearZones();
 	}
 

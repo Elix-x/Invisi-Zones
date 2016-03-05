@@ -9,27 +9,27 @@ public class InvisiExtendedEntityProperties implements IExtendedEntityProperties
 
 	public boolean hadGoogles;
 	public boolean wasInZone;
-	
-	public InvisiExtendedEntityProperties() {
+
+	public InvisiExtendedEntityProperties(){
 		hadGoogles = false;
 		wasInZone = false;
 	}
-	
+
 	@Override
-	public void saveNBTData(NBTTagCompound nbt) {
+	public void saveNBTData(NBTTagCompound nbt){
 		nbt.setBoolean("hadGoogles", hadGoogles);
 		nbt.setBoolean("wasInZone", wasInZone);
 	}
 
 	@Override
-	public void loadNBTData(NBTTagCompound nbt) {
+	public void loadNBTData(NBTTagCompound nbt){
 		hadGoogles = nbt.getBoolean("hadGoogles");
 		wasInZone = nbt.getBoolean("wasInZone");
 	}
 
 	@Override
-	public void init(Entity entity, World world) {
-		
+	public void init(Entity entity, World world){
+
 	}
 
 }

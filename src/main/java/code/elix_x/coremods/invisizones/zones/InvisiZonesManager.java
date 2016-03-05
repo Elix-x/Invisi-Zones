@@ -5,26 +5,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,18 +16,23 @@ import code.elix_x.coremods.invisizones.net.UpdateRendererMessage;
 import code.elix_x.coremods.invisizones.net.ZonesSyncingMessage;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
 public class InvisiZonesManager {
 
-	private static Set<InvisiZone> zones = new HashSet<InvisiZone>();
-	private static Logger logger = LogManager.getLogger("Invisi Zones Manager");
+	public static final Logger logger = LogManager.getLogger("Invisi Zones Manager");
 
-	public static Set<InvisiZone> getZones() {
+	private static Set<InvisiZone> zones = new HashSet<InvisiZone>();
+
+	public static Set<InvisiZone> getZones(){
 		return zones;
 	}
 
-	public static void removeZone(InvisiZone zone) {
+	public static void removeZone(InvisiZone zone){
 		Iterator<InvisiZone> iterator = getZones().iterator();
 		while(iterator.hasNext()){
 			InvisiZone temp = iterator.next();
@@ -59,7 +44,7 @@ public class InvisiZonesManager {
 		syncPlayers();
 	}
 
-	public static void setZones(Set<InvisiZone> zones2) {
+	public static void setZones(Set<InvisiZone> zones2){
 		logger.info("Setting zones to: " + zones2 + " On: " + FMLCommonHandler.instance().getSide());
 		zones.clear();
 		zones = zones2;
@@ -68,20 +53,20 @@ public class InvisiZonesManager {
 		}
 	}
 
-	public static void clearZones() {
+	public static void clearZones(){
 		logger.info("Clearing zones on: " + FMLCommonHandler.instance().getSide());
 		getZones().clear();
 	}
 
-	private static void syncPlayers() {
+	private static void syncPlayers(){
 		InvisiZonesBase.net.sendToAll(new ZonesSyncingMessage(getZones()));
 	}
 
-	public static void sincZonesWith(EntityPlayerMP player) {
+	public static void sincZonesWith(EntityPlayerMP player){
 		InvisiZonesBase.net.sendTo(new ZonesSyncingMessage(getZones()), player);
 	}
 
-	public static InvisiZone get(int x, int y, int z, int x2, int y2, int z2, UUID player, int dimId) {
+	public static InvisiZone get(int x, int y, int z, int x2, int y2, int z2, UUID player, int dimId){
 		InvisiZone nzone = new InvisiZone(AxisAlignedBB.getBoundingBox(Math.min(x, x2), Math.min(y, y2), Math.min(z, z2), Math.max(x, x2), Math.max(y, y2), Math.max(z, z2)), player, dimId);
 		for(InvisiZone zone : getZones()){
 			if(zone.equals(nzone)){
@@ -93,7 +78,7 @@ public class InvisiZonesManager {
 		return nzone;
 	}
 
-	public static InvisiZone[] getInZone(EntityPlayer player) {
+	public static InvisiZone[] getInZone(EntityPlayer player){
 		InvisiZone[] z = new InvisiZone[]{};
 		for(InvisiZone zone : getZones()){
 			if(zone.dimId == player.worldObj.provider.dimensionId){
@@ -105,7 +90,7 @@ public class InvisiZonesManager {
 		return z;
 	}
 
-	public static boolean inZone(EntityPlayer player) {
+	public static boolean inZone(EntityPlayer player){
 		for(InvisiZone zone : getZones()){
 			if(zone.dimId == player.worldObj.provider.dimensionId){
 				if(zone.inside(player.boundingBox)){
@@ -116,11 +101,11 @@ public class InvisiZonesManager {
 		return false;
 	}
 
-	public static boolean areGooglesActive(EntityPlayer player) {
-		return player.getCurrentArmor(0) != null && InvisiGooglesHelper.areGooglesActive(player.getCurrentArmor(0));
+	public static boolean areGooglesActive(EntityPlayer player){
+		return InvisiGooglesHelper.areGooglesActive(player.getCurrentArmor(0));
 	}
 
-	public static void checkPlayerAndUpdateRenderer(EntityPlayer player) {
+	public static void checkPlayerAndUpdateRenderer(EntityPlayer player){
 		if(player.getExtendedProperties("invisiPrevData") == null){
 			player.registerExtendedProperties("invisiPrevData", new InvisiExtendedEntityProperties());
 		}
@@ -137,7 +122,7 @@ public class InvisiZonesManager {
 			InvisiZonesManager.updateRenderer(player, InvisiZonesManager.getInZone(player));
 		}
 	}
-	
+
 	public static void updateRenderer(EntityPlayer player, InvisiZone... zoness){
 		if(FMLCommonHandler.instance().getSide() != Side.CLIENT){
 			InvisiZonesBase.net.sendTo(new UpdateRendererMessage(), (EntityPlayerMP) player);
@@ -155,8 +140,8 @@ public class InvisiZonesManager {
 			}
 		}
 	}
-	
-	public static boolean drawBlockHighlight(EntityPlayer player, MovingObjectPosition selector) {
+
+	public static boolean drawBlockHighlight(EntityPlayer player, MovingObjectPosition selector){
 		int x = selector.blockX;
 		int y = selector.blockY;
 		int z = selector.blockZ;
